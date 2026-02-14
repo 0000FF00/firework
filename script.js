@@ -221,7 +221,6 @@ startBtn.addEventListener('click', () => {
     });
 });
 
-// 轮播逻辑
 function startGallery() {
     // 1. 显示相册容器
     galleryContainer.style.opacity = 1;
@@ -238,7 +237,7 @@ function startGallery() {
         galleryImages[currentImageIndex].classList.add('active');
 
         // 当轮播完成一周期后，停止轮播并显示红包
-        if (currentImageIndex === 0) {
+        if (currentImageIndex === 0 && galleryImages[0].classList.contains('active')) {
             clearInterval(galleryInterval);
             showRedPacket();
         }
