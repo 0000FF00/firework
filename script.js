@@ -245,3 +245,17 @@ function startGallery() {
     }, 6000); // 这里的 3000 可以改，比如 4000 就是 4秒
 }
 
+document.getElementById('music').onended = function() {
+    document.getElementById('red-envelope').style.display = 'block';
+    // 停止烟花效果
+    stopFireworks();
+};
+
+function stopFireworks() {
+    // 假设烟花是通过一个canvas元素绘制的
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // 清空画布
+    // 这里可以添加其他停止烟花的逻辑，例如停止定时器等
+}
+
