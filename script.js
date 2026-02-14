@@ -225,7 +225,7 @@ function startGallery() {
     // 1. 显示相册容器
     galleryContainer.style.opacity = 1;
 
-    // 2. 设置定时器，每隔 3000 毫秒 (3秒) 换一张图
+    // 2. 设置定时器，每隔 9000 毫秒 (9秒) 换一张图
     let galleryInterval = setInterval(() => {
         // 当前图片淡出
         galleryImages[currentImageIndex].classList.remove('active');
@@ -238,10 +238,10 @@ function startGallery() {
 
         // 当轮播完成一周期后，停止轮播并显示红包
         if (currentImageIndex === 0 && galleryImages[0].classList.contains('active')) {
-            clearInterval(galleryInterval);
-            showRedPacket();
+            clearInterval(galleryInterval); // 停止轮播
+            showRedPacket(); // 显示红包
         }
-    }, 9000); // 这里的 3000 可以改，比如 4000 就是 4秒
+    }, 9000); // 这里的 9000 是每张图片显示的时间
 }
 
 document.getElementById('music').onended = function() {
@@ -258,3 +258,6 @@ function stopFireworks() {
     // 这里可以添加其他停止烟花的逻辑，例如停止定时器等
 }
 
+function showRedPacket() {
+    document.getElementById('red-envelope').style.display = 'block';
+}
