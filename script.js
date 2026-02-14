@@ -241,7 +241,7 @@ function startGallery() {
             clearInterval(galleryInterval);
             showRedPacket();
         }
-    }, 6000); // 这里的 3000 可以改，比如 4000 就是 4秒
+    }, 9000); // 这里的 3000 可以改，比如 4000 就是 4秒
 }
 
 document.getElementById('music').onended = function() {
