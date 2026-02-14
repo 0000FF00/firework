@@ -37,7 +37,7 @@ class Firework {
         this.distanceTraveled = 0;
         // 计算角度和速度
         this.angle = Math.atan2(ty - sy, tx - sx);
-        this.speed = 2;
+        this.speed = 1;
         this.acceleration = 1.05;
         this.brightness = random(50, 70);
         this.targetRadius = 1;
@@ -94,7 +94,7 @@ class Particle {
         this.x = x;
         this.y = y;
         this.angle = random(0, Math.PI * 2); // 随机散开角度
-        this.speed = random(1, 10); // 随机速度
+        this.speed = random(1, 8); // 随机速度
         this.friction = 0.95; // 摩擦力（减速）
         this.gravity = 1; // 重力（下坠）
         this.hue = random(hue - 20, hue + 20); // 颜色
@@ -129,7 +129,7 @@ class Particle {
 // 辅助函数与核心循环
 // ---------------------------------------------------------
 let hue = 120;
-let limiterTotal = 5; // 发射频率控制
+let limiterTotal = 4; // 发射频率控制
 let limiterTick = 0;
 
 function random(min, max) {
