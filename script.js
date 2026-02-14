@@ -221,12 +221,16 @@ startBtn.addEventListener('click', () => {
     });
 });
 
+let isGalleryFinished = false; // 新增标志位
+
 function startGallery() {
     // 1. 显示相册容器
     galleryContainer.style.opacity = 1;
 
     // 2. 设置定时器，每隔 9000 毫秒 (9秒) 换一张图
     let galleryInterval = setInterval(() => {
+        if (isGalleryFinished) return; // 如果轮播已完成，则不再执行
+
         // 当前图片淡出
         galleryImages[currentImageIndex].classList.remove('active');
 
@@ -238,6 +242,7 @@ function startGallery() {
 
         // 当轮播完成一周期后，停止轮播并显示红包
         if (currentImageIndex === 0 && galleryImages[0].classList.contains('active')) {
+            isGalleryFinished = true; // 设置标志位为已完成
             clearInterval(galleryInterval); // 停止轮播
             showRedPacket(); // 显示红包
         }
