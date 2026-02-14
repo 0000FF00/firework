@@ -227,7 +227,7 @@ function startGallery() {
     galleryContainer.style.opacity = 1;
 
     // 2. 设置定时器，每隔 3000 毫秒 (3秒) 换一张图
-    setInterval(() => {
+    let galleryInterval = setInterval(() => {
         // 当前图片淡出
         galleryImages[currentImageIndex].classList.remove('active');
 
@@ -236,5 +236,51 @@ function startGallery() {
 
         // 下一张图片淡入
         galleryImages[currentImageIndex].classList.add('active');
+
+        // 当轮播完成一周期后，停止轮播并显示红包
+        if (currentImageIndex === 0) {
+            clearInterval(galleryInterval);
+            showRedPacket();
+        }
     }, 3000); // 这里的 3000 可以改，比如 4000 就是 4秒
 }
+
+// 红包互动逻辑
+const redPacketContainer = document.getElementById('red-packet-container');
+const redPacketBox = document.getElementById('red-packet-box');
+const packetContentModal = document.getElementById('packet-content-modal');
+const closeModalBtn = document.getElementById('close-modal-btn');
+
+function showRedPacket() {
+    // 隐藏相册
+    galleryContainer.style.opacity = 0;
+    galleryContainer.style.pointerEvents = 'none';
+
+    // 显示红包
+    setTimeout(() => {
+        redPacketContainer.classList.add('show');
+    }, 500);
+}
+
+// 点击红包打开
+redPacketBox.addEventListener('click', () => {
+    // 添加打开动画
+    redPacketBox.classList.add('opening');
+
+    // 显示内容模态框
+    setTimeout(() => {
+        packetContentModal.classList.add('show');
+        redPacketContainer.classList.remove('show');
+    }, 600);
+});
+
+// 关闭模态框并继续开红包
+closeModalBtn.addEventListener('click', () => {
+    packetContentModal.classList.remove('show');
+
+    // 重置红包状态
+    setTimeout(() => {
+        redPacketBox.classList.remove('opening');
+        redPacketContainer.classList.add('show');
+    }, 500);
+});
