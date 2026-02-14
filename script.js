@@ -223,6 +223,7 @@ startBtn.addEventListener('click', () => {
 
 let isGalleryFinished = false; // 新增标志位
 
+// ...existing code...
 function startGallery() {
     // 1. 显示相册容器
     galleryContainer.style.opacity = 1;
@@ -234,20 +235,22 @@ function startGallery() {
         // 当前图片淡出
         galleryImages[currentImageIndex].classList.remove('active');
 
-        // 计算下一张图片的索引
-        currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+        // 计算下一张图片的索引（不使用环回）
+        let nextIndex = currentImageIndex + 1;
 
-        // 下一张图片淡入
-        galleryImages[currentImageIndex].classList.add('active');
-
-        // 当轮播完成一周期后，停止轮播并显示红包
-        if (currentImageIndex === 0 && galleryImages[0].classList.contains('active')) {
-            isGalleryFinished = true; // 设置标志位为已完成
-            clearInterval(galleryInterval); // 停止轮播
-            showRedPacket(); // 显示红包
+        // 如果已经到最后一张，则停止并显示红包（不回到第一张）
+        if (nextIndex >= galleryImages.length) {
+            isGalleryFinished = true;
+            clearInterval(galleryInterval);
+            showRedPacket();
+        } else {
+            // 下一张图片淡入并更新索引
+            galleryImages[nextIndex].classList.add('active');
+            currentImageIndex = nextIndex;
         }
-    }, 9000); // 这里的 9000 是每张图片显示的时间
+    }, 9000);
 }
+// ...existing code...
 
 document.getElementById('music').onended = function() {
     document.getElementById('red-envelope').style.display = 'block';
