@@ -7,18 +7,8 @@ const bgm = document.getElementById('bgm');
 const galleryContainer = document.getElementById('gallery-container');
 const galleryImages = document.querySelectorAll('.gallery-img');
 
-let w, h;
-let fireworks = [];
-let particles = [];
-let hue = 120;
-let limiterTotal = 5;
-let limiterTick = 0;
-let timerTotal = 80;
-let timerTick = 0;
-let mousedown = false;
-let mx, my;
-
 // --- 2. 画布适配 ---
+let w, h;
 function resize() {
     w = canvas.width = window.innerWidth;
     h = canvas.height = window.innerHeight;
@@ -26,7 +16,13 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// --- 3. 辅助函数 ---
+// --- 3. 烟花核心逻辑 (恢复原版) ---
+let fireworks = [];
+let particles = [];
+let hue = 120;
+let limiterTotal = 5; // 发射频率
+let limiterTick = 0;
+
 function random(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -37,7 +33,7 @@ function calculateDistance(p1x, p1y, p2x, p2y) {
     return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
 }
 
-// --- 4. 烟花类 (Firework) ---
+// 烟花弹类
 class Firework {
     constructor(sx, sy, tx, ty) {
         this.x = sx;
@@ -78,14 +74,18 @@ class Firework {
 
     draw() {
         ctx.beginPath();
-        ctx.moveTo(this.x - Math.cos(this.angle) * 5, this.y - Math.sin(this.angle) * 5);
+        ctx.moveTo(this.x - Math.cos(this.angle) * 5, this.y - Math.sin(this.angle) * 5); 
         ctx.lineTo(this.x, this.y);
         ctx.strokeStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(this.tx, this.ty, this.targetRadius, 0, Math.PI * 2);
         ctx.stroke();
     }
 }
 
-// --- 5. 粒子类 (Particle) ---
+// 爆炸粒子类
 class Particle {
     constructor(x, y) {
         this.x = x;
@@ -122,13 +122,13 @@ class Particle {
 }
 
 function createParticles(x, y) {
-    let particleCount = 30; // 手机端适当减少粒子数以防卡顿
+    let particleCount = 30; 
     while (particleCount--) {
         particles.push(new Particle(x, y));
     }
 }
 
-// --- 6. 动画循环 ---
+// --- 4. 动画循环 (核心) ---
 function loop() {
     requestAnimationFrame(loop);
 
@@ -151,34 +151,22 @@ function loop() {
         particles[j].update(j);
     }
 
-    if (timerTick >= timerTotal) {
-        fireworks.push(new Firework(w / 2, h, random(0, w), random(0, h / 2)));
-        timerTick = 0;
-    } else {
-        timerTick++;
-    }
-
+    // 自动发射逻辑 (保持原版)
     if (limiterTick >= limiterTotal) {
-        if (mousedown) {
-            fireworks.push(new Firework(w / 2, h, mx, my));
-            limiterTick = 0;
-        }
+        fireworks.push(new Firework(w / 2, h, random(0, w), random(0, h / 2)));
+        limiterTick = 0;
     } else {
         limiterTick++;
     }
 }
 
-// --- 7. 照片轮播逻辑 ---
+// --- 5. 照片轮播逻辑 (新增) ---
 let currentImageIndex = 0;
 function startGallery() {
-    galleryContainer.style.opacity = 1; // 显示容器
-    
-    // 立即显示第一张
+    galleryContainer.style.opacity = 1;
     if(galleryImages.length > 0) {
         galleryImages[0].classList.add('active');
     }
-
-    // 设置定时轮播 (每3秒换一张)
     setInterval(() => {
         if(galleryImages.length > 0) {
             galleryImages[currentImageIndex].classList.remove('active');
@@ -188,50 +176,32 @@ function startGallery() {
     }, 3000);
 }
 
-// --- 8. 事件监听 (核心交互) ---
+// --- 6. 事件监听 (修复音乐延迟) ---
 startBtn.addEventListener('click', () => {
-    // 改变按钮状态
+    // 按钮反馈
     const originalText = startBtn.innerText;
-    startBtn.innerText = "正在加载惊喜...";
-    startBtn.style.backgroundColor = "#ccc";
+    startBtn.innerText = "加载中...";
     startBtn.disabled = true;
 
-    // 尝试播放音乐
+    // 确保音乐加载后再开始
     bgm.play().then(() => {
-        // 音乐加载成功，开始表演！
         
-        // 隐藏开始界面
+        startBtn.innerText = originalText;
+        startBtn.disabled = false;
+        
+        // 隐藏界面
         startScreen.style.opacity = 0;
         setTimeout(() => {
             startScreen.style.display = 'none';
         }, 1000);
-
-        // 启动烟花
-        loop();
         
-        // 启动相册
+        // 开始动画和轮播
+        loop();
         startGallery();
 
     }).catch(error => {
-        // 播放失败处理
         console.log("播放失败:", error);
-        startBtn.innerText = "播放失败，点击重试";
-        startBtn.style.backgroundColor = "#ff4081";
+        startBtn.innerText = "播放失败，请重试";
         startBtn.disabled = false;
     });
 });
-
-// 支持点击屏幕任何地方放烟花 (增加互动性)
-canvas.addEventListener('mousedown', (e) => {
-    mousedown = true;
-    mx = e.pageX - canvas.offsetLeft;
-    my = e.pageY - canvas.offsetTop;
-});
-canvas.addEventListener('touchstart', (e) => {
-    mousedown = true;
-    mx = e.touches[0].pageX - canvas.offsetLeft;
-    my = e.touches[0].pageY - canvas.offsetTop;
-});
-
-canvas.addEventListener('mouseup', () => mousedown = false);
-canvas.addEventListener('touchend', () => mousedown = false);
