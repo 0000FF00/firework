@@ -242,7 +242,7 @@ function startGallery() {
             clearInterval(galleryInterval);
             showRedPacket();
         }
-    }, 3000); // 这里的 3000 可以改，比如 4000 就是 4秒
+    }, 6000); // 这里的 3000 可以改，比如 4000 就是 4秒
 }
 
 // 红包互动逻辑
