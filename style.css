@@ -74,7 +74,7 @@ h1 {
     z-index: 5; /* 在烟花上面，但在开始按钮下面 */
     pointer-events: none; /* 让点击穿透图片，不影响背景交互 */
     opacity: 0; /* 初始隐藏 */
-    transition: opacity 2s ease; /* 整体容器淡入效果 */
+    transition: opacity 3s ease; /* 整体容器淡入效果 */
 }
 
 .gallery-img {
